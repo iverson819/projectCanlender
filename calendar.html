@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8' />
+    <!--    連結fullcalendar  -->
+    <link href='fullcalendar/main.css' rel='stylesheet' />
+    <script src='fullcalendar/main.js'></script>
+    <!--    fullcalendar轉換成中文   -->
+    <script src="fullcalendar/locales-all.js"></script>
+
+
+    <link href="css/bootstrap.min.css" rel='stylesheet'>
+    <link href="css/jquery-ui.css" rel='stylesheet'>
+    <!--    連結CSS   -->
+    <link rel="stylesheet" href="css/Mystyle.css" rel='stylesheet'>
+    <!--    Jquery-->
+    <script src="js/jquery-3.5.1.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <!--    boostrap-->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale:'zh-tw',
+                height:600,
+                navLinks:'true',
+                selectable:true,
+                selectHelper:false,
+                headerToolbar: {
+                    left:'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                dateClick: function(info) {
+                    if(info.date < new Date()){
+                        alert("過去日期不可預約");
+                    }else{
+                        alert('Clicked on: ' + info.dateStr);
+                        $("#eventFormModal").modal('show');
+                        $('#dataInput').val(info.dateStr);
+                        $('#save').on('click',function (){
+                            let id = Date.now();
+                            let name = $('#reserveName').val();
+                            calendar.addEvent({
+                                id :id,
+                                title : name,
+                                start : info.date,
+                                allDay:true
+                            })
+                            $("#eventFormModal").modal('hide');
+                        })
+                    }
+
+                },
+                eventClick:function (info){
+                    let newid = Date.now();
+                    let eventinfo = calendar.getEventById(info.event.id);
+
+                    $('#editdataInput').val(eventinfo.startStr);
+                    $('#editreserveName').val(eventinfo.title);
+                    $("#editeventFormModal").modal('show');
+                    $('#update').on('click',function (){
+                        let title = $('#editreserveName').val();
+                        eventinfo.setProp('id', newid);
+                        eventinfo.setProp('title',title);
+                        $("#editeventFormModal").modal('hide');
+                    })
+                },
+                $('#delete').on('click',function (){
+                    eventinfo.remove();
+                })
+            });
+
+            calendar.render();
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div id='calendar'></div>
+    </div>
+
+    <!--input Modal -->
+    <div class="modal" id="eventFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="dataInput" class="control-label">日期</label>
+                        <input type="text" class="form-control" id="dataInput" name="dataInput">
+                    </div>
+                    <div class="form-group">
+                        <label for="reserveName" class="control-label">預約人</label>
+                        <input type="text" class="form-control" id="reserveName" name="reserveName">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="save" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--update Modal -->
+    <div class="modal" id="editeventFormModal" tabindex="-1" role="dialog" aria-labelledby="editeventFormModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="editdataInput" class="control-label">日期</label>
+                        <input type="text" class="form-control" id="editdataInput" name="dataInput">
+                    </div>
+                    <div class="form-group">
+                        <label for="editreserveName" class="control-label">預約人</label>
+                        <input type="text" class="form-control" id="editreserveName" name="reserveName">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="update" class="btn btn-primary">Update changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
