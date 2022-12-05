@@ -38,13 +38,47 @@
 
 
 
-
+                //點日期觸發
                 dateClick: function(info) {
                     if(info.date < new Date()){
                         alert("過去日期不可預約");
                     }else{
-                        alert('Clicked on: ' + info.dateStr);
+                        $('#eventDate').val(info.dateStr);
                         $("#eventFormModal").modal('show');
+                        $('#saveEvent').on('click',function (){
+                            let id = Date.now();
+                            let title = $('#eventText').val();
+                            //準備要傳送到後端的資料
+                            let eventToJSON = [{
+                                eventId:id,
+                                eventTitle:title
+                            }];
+
+                            calendar.addEvent({
+                                id:id,
+                                title:title,
+                                start:info.dateStr,
+                                allDay:true
+                            })
+
+                            //傳送至後端後再把事件內容抓出來顯示
+                            //  $.ajax({
+                            //     method:'POST',
+                            //     contentType:'application/json',
+                            //     url:'createEvent',
+                            //     data:JSON.stringify(eventToJSON)
+                            // }).done(rtnData => {
+                            //     if(!rtnData.errorText){
+                            //         calendar.addEvent({
+                            //             id:rtnData.id,
+                            //             title:rtnData.title,
+                            //             allDay:true
+                            //         })
+                            //     }
+                            // })
+
+
+                        })
                     }
 
                     // change the day's background color just for fun
@@ -66,17 +100,27 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">新增預約</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    ...
+                    <form>
+                        <div class="form-group">
+                            <label for="eventDate" class="control-label">預約日期</label>
+                            <input type="text" class="form-control" id="eventDate" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventDate" class="control-label">預約事件</label>
+                            <input type="text" class="form-control" id="eventText" >
+                        </div>
+                    </form>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" id="saveEvent" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
