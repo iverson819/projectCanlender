@@ -35,6 +35,45 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
+                //get events from DB
+                eventSources:[
+                    {
+                        events:function(fetchInfo, successCallback, failureCallback){
+                            let events = [];
+                            $.ajax({
+                                url:'find some Events',
+                                method:'POST',
+                                contentType:'application/json',
+                                dataType:'json',
+                                success:function (result) {
+                                    let eventList = result.returnData;
+                                    if(eventList.length > 0){
+                                        $.each(eventList ,function(i ,data) {
+                                            events.push(
+                                                {
+                                                    id: data.id,
+                                                    title: data.title,
+                                                    start: data.start,
+                                                    allDay: true
+                                                }
+                                            )
+                                        })
+                                        //渲染日曆
+                                        successCallback(events);
+                                    }else{
+                                        // do something
+                                    }
+                                }
+                            }),
+                            color:'',
+                            textColor:''
+                        },
+                    {
+                        events:function...
+                    }
+
+                    }
+                ],
 
 
 
